@@ -11,7 +11,7 @@
       "name": "working-with-constellation",
       "source": "./plugins/working-with-constellation",
       "description": "How an agent works with Constellation: choosing the organisation, tasks versus issues, the task lifecycle, the knowledge base, session summaries, review and decisions.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "category": "productivity"
     }
   ]

@@ -3,7 +3,7 @@ name: task-lifecycle
 description: The life of a Constellation task, from search-before-create to done. Tasks versus issues, claiming, reading the thread, links, follow-ups, splitting, estimates and time. Use whenever you file, start, split or finish work.
 metadata:
   pack: working-with-constellation
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Task lifecycle

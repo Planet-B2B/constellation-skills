@@ -1,8 +1,10 @@
 name: Validate
 
-# Runs in the published marketplace repository: the marketplace and the
-# plugin must validate in Claude Code, and the plugin's tree digest is printed
-# so it can be compared with the release record.
+# Runs in the published marketplace repository with Node alone and no
+# downloaded package: the marketplace entry and plugin.json agree on the
+# version, every skill names that version, and the plugin's tree digest is
+# printed for comparison with the release record. Claude Code's
+# `plugin validate` runs where the pack is authored, before each release.
 on:
   push:
   pull_request:
@@ -13,17 +15,28 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate the marketplace and the plugin
-        env:
-          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-plugin-validate
+      - name: Check that every manifest names the same version
         run: |
-          npx -y @anthropic-ai/claude-code@2.1.317 plugin validate .
-          npx -y @anthropic-ai/claude-code@2.1.317 plugin validate plugins/working-with-constellation
+          node --input-type=module -e "
+          import { readFileSync, readdirSync } from 'node:fs';
+          const plugin = 'plugins/working-with-constellation';
+          const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
+          const version = read(plugin + '/.claude-plugin/plugin.json').version;
+          const entry = read('.claude-plugin/marketplace.json').plugins[0];
+          const problems = [];
+          if (entry.version !== version) problems.push('marketplace entry ' + entry.version + ' vs plugin.json ' + version);
+          for (const skill of readdirSync(plugin + '/skills')) {
+            const text = readFileSync(plugin + '/skills/' + skill + '/SKILL.md', 'utf8');
+            if (!text.includes('\\n  version: ' + version + '\\n')) problems.push(skill + ' does not name ' + version);
+          }
+          if (problems.length > 0) { console.error(problems.join('\\n')); process.exit(1); }
+          console.log('version ' + version + ' is consistent');
+          "
       - name: Print the plugin's tree digest
         run: node plugins/working-with-constellation/scripts/tree-digest.mjs plugins/working-with-constellation --exclude manifest.json

@@ -231,7 +231,7 @@ export function releaseTagsFrom(lsRemote) {
     const [sha, ref] = line.trim().split('\t');
     if (!sha || !ref?.startsWith(TAG_PREFIX)) continue;
     const peeled = ref.endsWith('^{}');
-    const version = ref.slice(TAG_PREFIX.length, peeled ? -3 : undefined);
+    const version = ref.slice(TAG_PREFIX.length, peeled ? ref.length - 3 : ref.length);
     const parsed = parseSemver(version);
     if (!parsed || parsed.prerelease.length > 0) continue;
     if (peeled || !tags.has(version)) tags.set(version, sha);

@@ -3,7 +3,7 @@ name: consult-the-kb
 description: Ask the Constellation knowledge base what your team has already decided before non-trivial work, read the pages it cites, and cite them back. Also how to record a lesson after a correction, and what an empty answer means.
 metadata:
   pack: working-with-constellation
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Consult the knowledge base

@@ -3,7 +3,7 @@ name: working-with-constellation
 description: Start here in any session that touches Constellation work. Pick the organisation, orient, read the team-defaults page, and use only the Constellation MCP connector or the pt CLI. Points to the other skills in this pack.
 metadata:
   pack: working-with-constellation
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Working with Constellation

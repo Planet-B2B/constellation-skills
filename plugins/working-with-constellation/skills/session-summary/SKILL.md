@@ -3,7 +3,7 @@ name: session-summary
 description: The one comment a session leaves on its Constellation task. Decisions and why, what was rejected, deferrals each with a task key, open questions, and what shipped, shortest last. Post it before the first review-triggering action.
 metadata:
   pack: working-with-constellation
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Session summary

@@ -78,12 +78,14 @@ space.
 
 1. Change `version` (and `commit`, `treeDigest`) in
    `.constellation/skill-pack.json`, and commit it.
-2. Claude Code: re-add the marketplace with the new `#<tag>` (`--scope
-project`), then run
+2. Claude Code: re-add the marketplace with the new `#<tag>` and
+   `--scope project`, then run
    `claude plugin update working-with-constellation@constellation --scope project`.
-3. Codex: re-add the marketplace with the new `--ref` (for a git source; for a
-   local path, check out the new tag), then run
-   `codex plugin add working-with-constellation@constellation` again.
+3. Codex: remove the marketplace and add it again with the new `--ref` (Codex
+   refuses to re-add a marketplace from a different ref), then add the plugin
+   again: `codex plugin marketplace remove constellation`,
+   `codex plugin marketplace add <source> --ref working-with-constellation@<version>`,
+   `codex plugin add working-with-constellation@constellation`.
 
 The pin's version bump is the whole decision; steps 2 and 3 bring each
 machine in line with it, and the pin check below flags any that has not.
