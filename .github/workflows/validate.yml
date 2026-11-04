@@ -1,0 +1,29 @@
+name: Validate
+
+# Runs in the published marketplace repository: the marketplace and the
+# plugin must validate in Claude Code, and the plugin's tree digest is printed
+# so it can be compared with the release record.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate the marketplace and the plugin
+        env:
+          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-plugin-validate
+        run: |
+          npx -y @anthropic-ai/claude-code@2.1.317 plugin validate .
+          npx -y @anthropic-ai/claude-code@2.1.317 plugin validate plugins/working-with-constellation
+      - name: Print the plugin's tree digest
+        run: node plugins/working-with-constellation/scripts/tree-digest.mjs plugins/working-with-constellation --exclude manifest.json

@@ -1,0 +1,18 @@
+{
+  "name": "constellation",
+  "owner": {
+    "name": "Constellation"
+  },
+  "metadata": {
+    "description": "Skills for teams that plan and track their work in Constellation."
+  },
+  "plugins": [
+    {
+      "name": "working-with-constellation",
+      "source": "./plugins/working-with-constellation",
+      "description": "How an agent works with Constellation: choosing the organisation, tasks versus issues, the task lifecycle, the knowledge base, session summaries, review and decisions.",
+      "version": "0.1.0",
+      "category": "productivity"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "working-with-constellation",
+  "version": "0.1.0",
+  "description": "How an agent works with Constellation: choosing the organisation, tasks versus issues, the task lifecycle, the knowledge base, session summaries, review and decisions.",
+  "author": {
+    "name": "Constellation"
+  },
+  "license": "UNLICENSED",
+  "keywords": ["constellation", "project-tracker", "knowledge-base", "agents"]
+}
