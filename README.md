@@ -32,18 +32,15 @@ or a local path to a checkout. `<version>` is the release you want, for example
 ### Claude Code
 
 ```bash
-claude plugin marketplace add <source> --scope project
+claude plugin marketplace add "<git url>#working-with-constellation@<version>" --scope project
 claude plugin install working-with-constellation@constellation --scope project
 ```
 
-`--scope project` records the marketplace and the plugin in the repository's
+The `#<tag>` suffix pins the marketplace to that release: Claude Code records
+it as the source's `ref` and refuses a tag that does not exist. `--scope
+project` records the marketplace and the plugin in the repository's
 `.claude/settings.json`, so everyone who opens the repository is offered the
-same pack. Inside a session, `/plugin` does the same interactively.
-
-Claude Code installs what the marketplace source holds when you add or update
-it; its CLI takes no tag. To pin, point it at a source that holds the release
-you want (for a local path, check out the release tag first), and run the pin
-check with `--installed` to confirm the copy matches the pin.
+same release. Inside a session, `/plugin` does the same interactively.
 
 ### Codex
 
@@ -81,8 +78,8 @@ space.
 
 1. Change `version` (and `commit`, `treeDigest`) in
    `.constellation/skill-pack.json`, and commit it.
-2. Claude Code:
-   `claude plugin marketplace update constellation`, then
+2. Claude Code: re-add the marketplace with the new `#<tag>` (`--scope
+project`), then run
    `claude plugin update working-with-constellation@constellation --scope project`.
 3. Codex: re-add the marketplace with the new `--ref` (for a git source; for a
    local path, check out the new tag), then run

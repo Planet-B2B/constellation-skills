@@ -9,8 +9,9 @@
  *                      [--installed <plugin dir>] [--json]
  *
  * --source       the publishing repository: the latest release is the highest
- *                `working-with-constellation@<semver>` tag it carries, and a
- *                pinned commit is checked against the pinned version's tag;
+ *                `working-with-constellation@<semver>` tag it carries, the
+ *                pinned version must be one of its tags, and a pinned commit
+ *                must be that tag's commit;
  * --latest       the latest released version, as the caller knows it;
  * --marketplace  a checkout of the publishing marketplace at its newest
  *                release, whose plugin.json gives the latest version;
@@ -370,32 +371,27 @@ function currencyCheck(pinned, resolved) {
 }
 
 /**
- * `pin-commit-matches-tag`: a pinned commit must be the pinned version's tag.
+ * `pin-release-tagged`: the pinned version must be a release the source
+ * carries, and a pinned commit must be that release's tag.
  * @param {Pin} pin
  * @param {Map<string, string>} tags
  * @param {string} source
  * @returns {CheckResult}
  */
-function commitCheck(pin, tags, source) {
+function releaseCheck(pin, tags, source) {
+  const check = 'pin-release-tagged';
   const tagged = tags.get(pin.version);
   if (tagged === undefined) {
+    return { check, status: 'fail', evidence: `${source} has no tag ${PACK_NAME}@${pin.version}` };
+  }
+  if (pin.commit !== undefined && pin.commit !== tagged) {
     return {
-      check: 'pin-commit-matches-tag',
+      check,
       status: 'fail',
-      evidence: `${source} has no tag ${PACK_NAME}@${pin.version}`,
+      evidence: `pinned ${pin.commit}, but ${PACK_NAME}@${pin.version} is ${tagged}`,
     };
   }
-  return tagged === pin.commit
-    ? {
-        check: 'pin-commit-matches-tag',
-        status: 'pass',
-        evidence: `${PACK_NAME}@${pin.version} is ${tagged}`,
-      }
-    : {
-        check: 'pin-commit-matches-tag',
-        status: 'fail',
-        evidence: `pinned ${pin.commit}, but ${PACK_NAME}@${pin.version} is ${tagged}`,
-      };
+  return { check, status: 'pass', evidence: `${PACK_NAME}@${pin.version} is ${tagged}` };
 }
 
 /**
@@ -437,7 +433,7 @@ export function checkPin({ repo = '.', source, latest, marketplace, installed })
   if (source) {
     const remote = resolveLatestFromSource(source);
     results.push(currencyCheck(pin.version, remote));
-    if (pin.commit && !('check' in remote)) results.push(commitCheck(pin, remote.tags, source));
+    if (!('check' in remote)) results.push(releaseCheck(pin, remote.tags, source));
   } else {
     results.push(currencyCheck(pin.version, resolveLatest(latest, marketplace)));
   }
