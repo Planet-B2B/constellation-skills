@@ -40,7 +40,10 @@ The `#<tag>` suffix pins the marketplace to that release: Claude Code records
 it as the source's `ref` and refuses a tag that does not exist. `--scope
 project` records the marketplace and the plugin in the repository's
 `.claude/settings.json`, so everyone who opens the repository is offered the
-same release. Inside a session, `/plugin` does the same interactively.
+same release. In an interactive Claude Code terminal session, `/plugin` does
+the same through a menu; it is not available in a non-interactive run. Either
+way, a session that is already running does not load the pack until you reload
+it: see [Install during a session](#install-during-a-session).
 
 ### Codex
 
@@ -53,6 +56,75 @@ codex plugin add working-with-constellation@constellation
 the release tag there first. Codex keeps marketplaces in your own Codex
 configuration, not in the repository, which is why the repository also commits
 a pin file.
+
+**Codex installs the pack once per machine**, for your user, and every
+repository you open with Codex on that machine gets that one version. Each
+teammate runs the two commands above on their own machine, and repeats them on
+every upgrade.
+
+### Where the plugin is installed
+
+`check-pin.mjs --installed` needs the directory of the installed copy:
+
+- **Claude Code**: `~/.claude/plugins/cache/constellation/working-with-constellation/<version>/`.
+  `claude plugin list --json` prints the exact `installPath`.
+- **Codex**: `~/.codex/plugins/cache/constellation/working-with-constellation/<version>/`,
+  under `$CODEX_HOME` instead of `~/.codex` when that is set.
+  `codex plugin add` prints it as the installed plugin root.
+
+### Check that the pack is loaded
+
+```bash
+claude plugin list | grep -A3 'working-with-constellation@constellation'
+codex plugin list | grep 'working-with-constellation'
+```
+
+The output must show the version you pinned, and the plugin as enabled: an
+installed plugin that is disabled is not loaded. This list is the check. Do not
+rely on asking an agent which version it has loaded, since it can read a
+version from this README or from the pin without having the pack.
+
+### Install during a session
+
+A session loads its plugins when it starts. Installing the pack while a session
+is running, by hand or by asking the agent to run the commands above, writes
+the settings but leaves that session without the pack:
+
+- **Claude Code**: run `/reload-plugins` in the session, or start a new
+  session. Claude Code prints the same advice after an install.
+- **Codex**: start a new session.
+
+An agent cannot do this step for you. It can run the install commands in a
+shell, but it cannot run a slash command, reload its own plugins or open a new
+session. Asked to "install the skill pack", it should run the commands and then
+tell you to reload or start a new session. Until then, none of the pack's
+skills can fire, and the pack cannot explain why, because it is not loaded yet.
+
+### Use the skills
+
+You do not have to name a skill. Ask for the work in your own words, such as
+"work on ENG-12", "ask the knowledge base what we decided about caching" or
+"write the session summary for ENG-12", and the agent picks the matching skill
+from its description. Before the first Constellation call of a session it
+should load `working-with-constellation`.
+
+To call a skill by name in Claude Code, use the plugin's namespace:
+`/working-with-constellation:task-lifecycle`, or ask "use the task-lifecycle
+skill". If no skill loads, check first that the pack is loaded (above), then
+that the session was started or reloaded after the install.
+
+A skill of the repository's own with the same name wins over the pack's: in a
+repository that keeps its own `consult-the-kb`, "ask the knowledge base" and
+even "use the consult-the-kb skill" load the repository's. A repository skill
+that only covers the same request may be picked instead of the pack's. In
+either case, call the pack's by its namespaced name, as above.
+
+### Keep `AGENTS.md` working without the pack
+
+An agent that opens the repository without the pack installed still reads
+`AGENTS.md`. Write it so it holds on its own: state there the rules the
+repository depends on, or say plainly that the pack is required and how to
+install it. Do not rely on pointers to skills an agent may not have.
 
 ### Pin the version in the repository
 

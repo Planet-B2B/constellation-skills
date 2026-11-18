@@ -1,9 +1,9 @@
 ---
 name: session-summary
-description: The one comment a session leaves on its Constellation task. Decisions and why, what was rejected, deferrals each with a task key, open questions, and what shipped, shortest last. Post it before the first review-triggering action.
+description: 'Write the session summary: the one comment a session leaves on its Constellation task. Use when the user asks for the summary, recap or hand-over note of this session or of its task, or a wrap-up comment on the task, and on your own before handing work over, opening a pull request or ending a session. Decisions and why, what was rejected, deferrals each with a task key, open questions, and what shipped, shortest last.'
 metadata:
   pack: working-with-constellation
-  version: 0.1.2
+  version: 0.2.5
 ---
 
 # Session summary
@@ -26,7 +26,9 @@ find your summary in the thread by its heading.
 
 ## The template
 
-Keep the order and the headings exactly.
+Keep these headings, in this order. Your team-defaults page may add its own
+sections after **Shipped**, such as the checks that ran. Never rename or
+reorder these four, and never drop one of the three required ones.
 
 ```markdown
 ## Session summary — <TASK-KEY>
@@ -90,6 +92,16 @@ Signs you are writing a transcript:
 - pasted diffs, file lists or command output;
 - the task description repeated back;
 - follow-ups mentioned with no task key.
+
+Never put in a summary:
+
+- secrets, credentials or tokens;
+- personal data or customer data;
+- steps that would let someone exploit a weakness. On a security task, name
+  only the area affected and the fix.
+
+Link only to places the summary's readers can open. A link to a private
+document or a local file tells them nothing.
 
 ## The description is not the summary
 

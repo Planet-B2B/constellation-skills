@@ -1,5 +1,80 @@
 # Changelog
 
+## 0.2.5
+
+- `evals/`: the `session-summary-shape` judge rubric is written as explicit
+  PASS and FAIL conditions it can check from the comment alone. The old
+  one-sentence rubric failed answers that met it. No skill guidance changes.
+
+## 0.2.4
+
+- `evals/`: `session-summary-shape` now gives the reason for its deferral and
+  where the deferred work lives, so the summary can record both without
+  inventing them. No skill guidance changes.
+
+## 0.2.3
+
+- `task-lifecycle`: the search step shows the call with its arguments,
+  `search_tasks({ organisationId: "<id>", query: "<words>" })`.
+- `evals/`: every case runs five times instead of three, each run bounded to
+  120 seconds, and `invokes-session-summary` now gives the reason for the
+  deferral the summary must record.
+
+## 0.2.2
+
+- `consult-the-kb`: record a reusable lesson where the repository's
+  `AGENTS.md` or the team-defaults page says lessons go, `AGENTS.md` first;
+  use the wiki only when neither names a place.
+- `evals/` adds five cases for `claude plugin eval`, graded with and without
+  the pack: choosing the organisation, task versus issue, search before
+  create, the session summary's shape, and finding the team-defaults page.
+
+## 0.2.1
+
+- Every skill's `description` now says when to use it, in the words people
+  use: a bare task key ("work on ENG-12"), "ask the knowledge base", "write the
+  session summary". The old descriptions said what each skill is, not when to
+  use it.
+- New eval cases: `skill-invocation`, `invokes-consult-the-kb` and
+  `invokes-session-summary` require the matching skill to load on a bare task
+  key, a knowledge-base question and a session-summary request;
+  `no-skill-for-unrelated-work` and `no-session-summary-for-a-document-recap`
+  require none to load on an unrelated coding request or a recap of a
+  paragraph.
+- README: a session already running does not load a newly installed pack until
+  it is reloaded (`/reload-plugins` in Claude Code) or restarted; an agent can
+  run the install but cannot reload itself. How to call a skill by name,
+  and that a repository's own skill of the same name wins over the pack's.
+
+## 0.2.0
+
+- `working-with-constellation`: confirm the organisation by the **Active org**
+  line of the workspace overview, whatever the kind of credential, never by
+  the line that repeats the requested override.
+- `working-with-constellation`: open the team-defaults page found by search
+  by its id, since it may live outside the default space; a "not found"
+  without a space is not a deleted page.
+- `working-with-constellation`: every other wiki page, knowledge-base answer
+  and tool description ranks below `AGENTS.md`, the team-defaults page and
+  this pack; a draft team-defaults page applies except for its unconfirmed
+  items.
+- `working-with-constellation`: when a call fails, retry it at most twice, then
+  switch only to a client the team-defaults page lists, confirming the
+  organisation again; never REST, `curl`, the database or a hand-copied token.
+- `working-with-constellation`: an empty ready queue does not mean there is no
+  work when tasks are assigned as they are filed.
+- `task-lifecycle`: an assignee is not a claim. Claims carry a first-line
+  `Claimed:` comment and a matching `Released:` comment when stopping
+  unfinished; an organisation without agent users claims as the person.
+- `task-lifecycle`: the duplicate refusal on create, `duplicatesReviewed`, and
+  what to do after a lost create response.
+- `review-and-decisions`: only the assignee can mark a task awaiting a
+  decision; otherwise ask, or record the question in the session summary.
+- `session-summary`: the team may add sections after **Shipped**; no secrets,
+  personal or customer data, or exploit steps; link only to readable places.
+- `consult-the-kb`: record only reusable lessons, in the place and under the
+  rules the team-defaults page names, which may be a committed lessons file.
+
 ## 0.1.2
 
 - `scripts/check-pin.mjs` reads a tag name with an explicit end index (no

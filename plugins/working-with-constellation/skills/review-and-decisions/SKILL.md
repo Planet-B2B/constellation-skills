@@ -1,9 +1,9 @@
 ---
 name: review-and-decisions
-description: Who decides what on a Constellation team, and how an agent prepares work for a human to approve. Plan before non-trivial work, answer every review comment, never treat green checks as approval, and mark a task awaiting a decision instead of guessing.
+description: 'Who decides what on a Constellation team, and how an agent prepares work for a human to approve. Use when planning non-trivial work, answering review comments, asking for approval or a merge, or when a question needs a human decision ("which option should we take?"). Answer every review comment, never treat green checks as approval, and mark a task awaiting a decision instead of guessing.'
 metadata:
   pack: working-with-constellation
-  version: 0.1.2
+  version: 0.2.5
 ---
 
 # Review and decisions
@@ -33,9 +33,14 @@ what. Where it is silent, use the defaults below.
 
 ## When a human must decide
 
-Do not guess on a product question. Mark the task as awaiting a decision
-(`mark_awaiting_decision`), say what is being decided and who should decide,
-and carry on with any work the answer does not block.
+Do not guess on a product question. Say what is being decided and who should
+decide, and carry on with any work the answer does not block.
+
+- **If you are the task's assignee** and it is in progress, mark it as
+  awaiting a decision (`mark_awaiting_decision`). Only the assignee can.
+- **If someone else is the assignee**, do not reassign the task just to raise
+  the question. Ask the user first; otherwise put the question under **Open
+  questions** in the session summary, naming who decides.
 
 ## Review
 

@@ -1,9 +1,9 @@
 ---
 name: consult-the-kb
-description: Ask the Constellation knowledge base what your team has already decided before non-trivial work, read the pages it cites, and cite them back. Also how to record a lesson after a correction, and what an empty answer means.
+description: 'Ask the Constellation knowledge base what the team has already decided, read the pages it cites, and cite them back. Use when the user asks to consult, check or search the knowledge base ("the KB"), or asks what the team has decided or learned about something, and on your own before non-trivial work such as a new feature or a design choice. Also how to record a lesson after a correction, and what an empty answer means.'
 metadata:
   pack: working-with-constellation
-  version: 0.1.2
+  version: 0.2.5
 ---
 
 # Consult the knowledge base
@@ -46,10 +46,14 @@ search the wiki.
 
 ## Write back what you learn
 
-- **After a correction**, from a reviewer or from the user, record the lesson
-  so the next session does not repeat the mistake. Your team-defaults page says
-  where lessons go.
+- **After a correction**, from a reviewer or from the user, decide whether it
+  is a lesson the next session can reuse or a one-off. Record a reusable one
+  where your repository's `AGENTS.md` or your team-defaults page says lessons
+  go, under that place's own rules for what it admits: the wiki, or a lessons
+  file committed to the repository. `AGENTS.md` wins where the two differ.
+  Use the wiki only when neither names a place.
 - **After writing any page, read it back.** A successful response does not
   prove the body landed as you wrote it.
-- Decisions and conventions belong in the wiki, where every person and agent
-  can find them. Notes in a local file help only you.
+- Decisions and conventions belong where every person and agent on the team
+  can find them: the wiki, or files committed to the repository. Notes in a
+  local file that is not committed help only you.
