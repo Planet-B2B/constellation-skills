@@ -9,9 +9,9 @@
  *                      [--installed <plugin dir>] [--json]
  *
  * --source       the publishing repository: the latest release is the highest
- *                `working-with-constellation@<semver>` tag it carries, the
- *                pinned version must be one of its tags, and a pinned commit
- *                must be that tag's commit;
+ *                `constellation@<semver>` tag it carries, the pinned version
+ *                must be one of its tags, and a pinned commit must be that
+ *                tag's commit;
  * --latest       the latest released version, as the caller knows it;
  * --marketplace  a checkout of the publishing marketplace at its newest
  *                release, whose plugin.json gives the latest version;
@@ -22,6 +22,11 @@
  * latest version the currency check is `unknown`, never `pass`. Exit code: 0
  * when every check passes, 1 when any fails, 2 when none fails but one is
  * unknown.
+ *
+ * Before 0.3.0 the pack was named `working-with-constellation`. A pin that
+ * still names it is valid and is verified against that name's tags, but it is
+ * always reported stale (`pin-current` fails), with the step to move to the
+ * latest `constellation@<semver>` release. Any other pack name is refused.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -31,7 +36,12 @@ import { fileURLToPath } from 'node:url';
 
 import { DIGEST_RE, treeDigest } from './tree-digest.mjs';
 
-export const PACK_NAME = 'working-with-constellation';
+export const PACK_NAME = 'constellation';
+/**
+ * The pack's earlier names. A pin naming one is read and verified against that
+ * name's release tags, and is always stale.
+ */
+export const LEGACY_PACK_NAMES = Object.freeze(['working-with-constellation']);
 export const PIN_PATH = '.constellation/skill-pack.json';
 
 // SemVer 2.0.0 without build metadata. A numeric identifier, prerelease ones
@@ -129,6 +139,24 @@ export function compareSemver(left, right) {
 }
 
 /**
+ * True for this pack's name or one of its earlier names.
+ * @param {unknown} name
+ * @returns {boolean}
+ */
+export function isKnownPackName(name) {
+  return name === PACK_NAME || (typeof name === 'string' && LEGACY_PACK_NAMES.includes(name));
+}
+
+/**
+ * True when a pin names one of the pack's earlier names.
+ * @param {{ pack: string }} pin
+ * @returns {boolean}
+ */
+export function isLegacyPin(pin) {
+  return pin.pack !== PACK_NAME && LEGACY_PACK_NAMES.includes(pin.pack);
+}
+
+/**
  * Problems with a parsed pin object; empty when it is well formed.
  * @param {unknown} value
  * @returns {string[]}
@@ -140,7 +168,9 @@ export function validatePin(value) {
     return ['the pin is not a JSON object'];
   }
   const pin = /** @type {Record<string, unknown>} */ (value);
-  if (pin.pack !== PACK_NAME) problems.push(`"pack" must be "${PACK_NAME}"`);
+  if (!isKnownPackName(pin.pack)) {
+    problems.push(`"pack" must be "${PACK_NAME}" (or its earlier name "${LEGACY_PACK_NAMES[0]}")`);
+  }
   if (!parseSemver(pin.version)) problems.push('"version" must be a semver such as 1.2.0');
   if (pin.commit !== undefined && !(typeof pin.commit === 'string' && COMMIT_RE.test(pin.commit))) {
     problems.push('"commit" must be a 40-character lowercase hex commit');
@@ -215,23 +245,24 @@ function readPin(repo) {
   return { results, pin: valid };
 }
 
-const TAG_PREFIX = `refs/tags/${PACK_NAME}@`;
-
 /**
- * The release tags in `git ls-remote --tags` output, as version → commit. A
- * peeled `^{}` line (an annotated tag's commit) wins over the tag object.
- * Prerelease versions are left out: they are not releases.
+ * The release tags of `pack` in `git ls-remote --tags` output, as version →
+ * commit: `refs/tags/<pack>@<semver>`, `constellation` by default. A peeled
+ * `^{}` line (an annotated tag's commit) wins over the tag object. Prerelease
+ * versions are left out: they are not releases.
  * @param {string} lsRemote
+ * @param {string} [pack]
  * @returns {Map<string, string>}
  */
-export function releaseTagsFrom(lsRemote) {
+export function releaseTagsFrom(lsRemote, pack = PACK_NAME) {
+  const prefix = `refs/tags/${pack}@`;
   /** @type {Map<string, string>} */
   const tags = new Map();
   for (const line of lsRemote.split('\n')) {
     const [sha, ref] = line.trim().split('\t');
-    if (!sha || !ref?.startsWith(TAG_PREFIX)) continue;
+    if (!sha || !ref?.startsWith(prefix)) continue;
     const peeled = ref.endsWith('^{}');
-    const version = ref.slice(TAG_PREFIX.length, peeled ? ref.length - 3 : ref.length);
+    const version = ref.slice(prefix.length, peeled ? ref.length - 3 : ref.length);
     const parsed = parseSemver(version);
     if (!parsed || parsed.prerelease.length > 0) continue;
     if (peeled || !tags.has(version)) tags.set(version, sha);
@@ -256,30 +287,32 @@ export function latestOf(tags) {
 const GIT_CANDIDATES = ['/usr/bin/git', '/opt/homebrew/bin/git', '/usr/local/bin/git'];
 
 /**
- * The release tags of the publishing repository at `source`.
+ * The `git ls-remote --tags` output of the publishing repository at `source`.
  * @param {string} source
- * @returns {Map<string, string>}
+ * @returns {string}
  */
-function readReleaseTags(source) {
+function listTags(source) {
   const git = GIT_CANDIDATES.find((candidate) => existsSync(candidate));
   if (git === undefined) throw new Error(`git not found at ${GIT_CANDIDATES.join(', ')}`);
-  const output = execFileSync(git, ['ls-remote', '--tags', source], {
+  return execFileSync(git, ['ls-remote', '--tags', source], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     timeout: 30_000,
   });
-  return releaseTagsFrom(output);
 }
 
 /**
- * The latest release from the publishing repository, with its tags.
+ * The latest `constellation@<semver>` release from the publishing repository,
+ * and the release tags of the pin's own pack name, which differ for a pin that
+ * names an earlier name.
  * @param {string} source
- * @returns {{ version: string, source: string, tags: Map<string, string> } | CheckResult}
+ * @param {string} pinnedPack
+ * @returns {{ latest: { version: string, source: string } | CheckResult, pinnedTags: Map<string, string> } | CheckResult}
  */
-function resolveLatestFromSource(source) {
-  let tags;
+function resolveFromSource(source, pinnedPack) {
+  let output;
   try {
-    tags = readReleaseTags(source);
+    output = listTags(source);
   } catch (error) {
     return {
       check: 'pin-current',
@@ -287,15 +320,17 @@ function resolveLatestFromSource(source) {
       evidence: `cannot list tags of ${source}: ${messageOf(error)}`,
     };
   }
-  const version = latestOf(tags);
-  if (version === null) {
-    return {
-      check: 'pin-current',
-      status: 'unknown',
-      evidence: `${source} carries no ${PACK_NAME}@<semver> release tag`,
-    };
-  }
-  return { version, source, tags };
+  const version = latestOf(releaseTagsFrom(output, PACK_NAME));
+  /** @type {{ version: string, source: string } | CheckResult} */
+  const latest =
+    version === null
+      ? {
+          check: 'pin-current',
+          status: 'unknown',
+          evidence: `${source} carries no ${PACK_NAME}@<semver> release tag`,
+        }
+      : { version, source };
+  return { latest, pinnedTags: releaseTagsFrom(output, pinnedPack) };
 }
 
 /**
@@ -341,12 +376,36 @@ function resolveLatest(latest, marketplace) {
 }
 
 /**
- * `pin-current`: a pin older than the latest release fails.
- * @param {string} pinned
+ * `pin-current` for a pin that names one of the pack's earlier names: always
+ * stale, with the release to move to when it is known.
+ * @param {Pin} pin
  * @param {{ version: string, source: string } | CheckResult} resolved
  * @returns {CheckResult}
  */
-function currencyCheck(pinned, resolved) {
+function legacyCurrencyCheck(pin, resolved) {
+  const target =
+    'check' in resolved || !parseSemver(resolved.version)
+      ? `the latest ${PACK_NAME}@<version> release`
+      : `${PACK_NAME}@${resolved.version} (${resolved.source})`;
+  return {
+    check: 'pin-current',
+    status: 'fail',
+    evidence:
+      `pins ${pin.pack}@${pin.version}, the pack's earlier name: upgrade to ${target} ` +
+      `and set "pack" to "${PACK_NAME}" (README § Upgrading from ${pin.pack})`,
+  };
+}
+
+/**
+ * `pin-current`: a pin older than the latest release fails, and so does a pin
+ * that names one of the pack's earlier names.
+ * @param {Pin} pin
+ * @param {{ version: string, source: string } | CheckResult} resolved
+ * @returns {CheckResult}
+ */
+function currencyCheck(pin, resolved) {
+  if (isLegacyPin(pin)) return legacyCurrencyCheck(pin, resolved);
+  const pinned = pin.version;
   if ('check' in resolved) return resolved;
   const { version, source } = resolved;
   if (!parseSemver(version)) {
@@ -372,26 +431,24 @@ function currencyCheck(pinned, resolved) {
 
 /**
  * `pin-release-tagged`: the pinned version must be a release the source
- * carries, and a pinned commit must be that release's tag.
+ * carries under the pin's own pack name, and a pinned commit must be that
+ * release's tag.
  * @param {Pin} pin
- * @param {Map<string, string>} tags
+ * @param {Map<string, string>} tags the release tags of `pin.pack`
  * @param {string} source
  * @returns {CheckResult}
  */
 function releaseCheck(pin, tags, source) {
   const check = 'pin-release-tagged';
+  const tag = `${pin.pack}@${pin.version}`;
   const tagged = tags.get(pin.version);
   if (tagged === undefined) {
-    return { check, status: 'fail', evidence: `${source} has no tag ${PACK_NAME}@${pin.version}` };
+    return { check, status: 'fail', evidence: `${source} has no tag ${tag}` };
   }
   if (pin.commit !== undefined && pin.commit !== tagged) {
-    return {
-      check,
-      status: 'fail',
-      evidence: `pinned ${pin.commit}, but ${PACK_NAME}@${pin.version} is ${tagged}`,
-    };
+    return { check, status: 'fail', evidence: `pinned ${pin.commit}, but ${tag} is ${tagged}` };
   }
-  return { check, status: 'pass', evidence: `${PACK_NAME}@${pin.version} is ${tagged}` };
+  return { check, status: 'pass', evidence: `${tag} is ${tagged}` };
 }
 
 /**
@@ -431,11 +488,14 @@ export function checkPin({ repo = '.', source, latest, marketplace, installed })
   const { results, pin } = readPin(repo);
   if (pin === null) return results;
   if (source) {
-    const remote = resolveLatestFromSource(source);
-    results.push(currencyCheck(pin.version, remote));
-    if (!('check' in remote)) results.push(releaseCheck(pin, remote.tags, source));
+    const remote = resolveFromSource(source, pin.pack);
+    if ('check' in remote) {
+      results.push(currencyCheck(pin, remote));
+    } else {
+      results.push(currencyCheck(pin, remote.latest), releaseCheck(pin, remote.pinnedTags, source));
+    }
   } else {
-    results.push(currencyCheck(pin.version, resolveLatest(latest, marketplace)));
+    results.push(currencyCheck(pin, resolveLatest(latest, marketplace)));
   }
   if (installed) results.push(installCheck(pin.treeDigest, installed));
   return results;

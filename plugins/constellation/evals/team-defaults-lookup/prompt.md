@@ -11,7 +11,7 @@ repository's `.constellation/skill-pack.json` contains:
 
 ```json
 {
-  "pack": "working-with-constellation",
+  "pack": "constellation",
   "teamDefaults": { "page": "how-we-work", "spaceSlug": "engineering" }
 }
 ```

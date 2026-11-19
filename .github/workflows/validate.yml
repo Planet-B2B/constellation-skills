@@ -25,7 +25,7 @@ jobs:
         run: |
           node --input-type=module -e "
           import { readFileSync, readdirSync } from 'node:fs';
-          const plugin = 'plugins/working-with-constellation';
+          const plugin = 'plugins/constellation';
           const read = (path) => JSON.parse(readFileSync(path, 'utf8'));
           const version = read(plugin + '/.claude-plugin/plugin.json').version;
           const entry = read('.claude-plugin/marketplace.json').plugins[0];
@@ -39,4 +39,4 @@ jobs:
           console.log('version ' + version + ' is consistent');
           "
       - name: Print the plugin's tree digest
-        run: node plugins/working-with-constellation/scripts/tree-digest.mjs plugins/working-with-constellation --exclude manifest.json
+        run: node plugins/constellation/scripts/tree-digest.mjs plugins/constellation --exclude manifest.json

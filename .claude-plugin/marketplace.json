@@ -1,5 +1,5 @@
 {
-  "name": "constellation",
+  "name": "constellation-skills",
   "owner": {
     "name": "Constellation"
   },
@@ -8,10 +8,10 @@
   },
   "plugins": [
     {
-      "name": "working-with-constellation",
-      "source": "./plugins/working-with-constellation",
-      "description": "How an agent works with Constellation: choosing the organisation, tasks versus issues, the task lifecycle, the knowledge base, session summaries, review and decisions.",
-      "version": "0.2.5",
+      "name": "constellation",
+      "source": "./plugins/constellation",
+      "description": "How an agent works with Constellation: getting started, choosing the organisation, tasks versus issues, the task lifecycle, the knowledge base, session summaries, review and decisions.",
+      "version": "0.3.1",
       "category": "productivity"
     }
   ]

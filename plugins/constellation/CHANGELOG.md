@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.3.1
+
+- `evals/`: the `start` case's judge rubric says the answer is a plan of
+  calls, made without a connector, and judges that plan. The judge sees only
+  the answer, so it had failed plans for not having run the calls. No skill
+  guidance changes.
+
+## 0.3.0
+
+Never published: its changes are first released in 0.3.1.
+
+- **Renamed.** The plugin `working-with-constellation` is now `constellation`,
+  and the marketplace `constellation` is now `constellation-skills`, named
+  after the repository it is published from. Install with
+  `/plugin marketplace add Planet-B2B/constellation-skills` and
+  `/plugin install constellation@constellation-skills`. Skills are called as
+  `/constellation:<skill>`; each skill keeps its name, including
+  `working-with-constellation`. Release tags are now `constellation@<version>`
+  and the archive `constellation-<version>.tar.gz`; releases up to 0.2.5 keep
+  their `working-with-constellation@<version>` tags.
+- New skill `start`, run as `/constellation:start` or by asking to get started:
+  it checks the Constellation connector, settles the organisation, looks for
+  the team-defaults page, and ends with a short readiness report and prompts
+  to try next. It only reads. New eval case `start`.
+- `scripts/check-pin.mjs`: a pin whose `pack` is `working-with-constellation`
+  is still valid and is verified against that name's tags, but is always
+  reported stale, with the release to move to. Any other pack name is refused.
+- README: opens with a three-step Quick start, and a new section, "Upgrading
+  from working-with-constellation", gives the steps to move: uninstall the old
+  plugin, remove the old marketplace, add the marketplace again, install
+  `constellation@constellation-skills`, update the pin, reload.
+- `evals/`: the graders that check whether a pack skill loads now match the
+  plugin's namespace, `constellation:`, so they cover every pack skill, not
+  only the core one. The `start` case's rubric fails an answer that treats a
+  missing team-defaults page as an error.
+
 ## 0.2.5
 
 - `evals/`: the `session-summary-shape` judge rubric is written as explicit

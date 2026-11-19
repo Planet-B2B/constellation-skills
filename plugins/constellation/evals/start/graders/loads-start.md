@@ -1,8 +1,8 @@
 ---
 type: tool_used
 tool: Skill
-input_match: working-with-constellation
+input_match: 'constellation:start'
 min: 1
 arm: both
-weight: 2
+weight: 1
 ---

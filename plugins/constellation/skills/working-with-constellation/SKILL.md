@@ -2,8 +2,8 @@
 name: working-with-constellation
 description: 'Start here whenever a session touches work tracked in Constellation: a task or issue key such as ENG-12, a ticket, the backlog, a cycle, the team wiki or the knowledge base. Use it before the first Constellation call, even when the user names only a key or asks "what should I work on next?". Picks and confirms the organisation, orients, reads the team-defaults page, keeps to the Constellation MCP connector or the pt CLI, and says which other skill of this pack fits the request.'
 metadata:
-  pack: working-with-constellation
-  version: 0.2.5
+  pack: constellation
+  version: 0.3.1
 ---
 
 # Working with Constellation
@@ -139,6 +139,7 @@ Look things up by name at call time (`find_project`, `find_user`,
 
 | Skill                  | Use it when                                                      |
 | ---------------------- | ---------------------------------------------------------------- |
+| `start`                | A person asks to get started or to set up Constellation          |
 | `task-lifecycle`       | Filing, claiming, starting, splitting or finishing a task        |
 | `consult-the-kb`       | Before non-trivial work, and after a correction                  |
 | `session-summary`      | Before handing work over, and at the end of a session            |
@@ -150,8 +151,8 @@ The pin file records which version of this pack the repository expects:
 
 ```json
 {
-  "pack": "working-with-constellation",
-  "version": "0.1.0",
+  "pack": "constellation",
+  "version": "0.3.1",
   "commit": "<40-character commit of the release>",
   "treeDigest": "sha256:<64 hex characters>",
   "teamDefaults": { "spaceSlug": "<space>", "page": "team-defaults" }
@@ -161,5 +162,7 @@ The pin file records which version of this pack the repository expects:
 `scripts/check-pin.mjs` in this pack reports whether that pin is present, well
 formed, and current, or whether it trails the latest release. Point it at the
 pack's source with `--source <source>`: it reads the release tags there and
-checks that a pinned `commit` is the pinned version's tag. The pin says what
+checks that a pinned `commit` is the pinned version's tag. A pin that still
+names the pack's earlier name, `working-with-constellation`, is read and
+verified against that name's tags, and reported as one to upgrade. The pin says what
 the team intends to load. It does not prove what a given session loaded.

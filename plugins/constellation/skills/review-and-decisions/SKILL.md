@@ -2,8 +2,8 @@
 name: review-and-decisions
 description: 'Who decides what on a Constellation team, and how an agent prepares work for a human to approve. Use when planning non-trivial work, answering review comments, asking for approval or a merge, or when a question needs a human decision ("which option should we take?"). Answer every review comment, never treat green checks as approval, and mark a task awaiting a decision instead of guessing.'
 metadata:
-  pack: working-with-constellation
-  version: 0.2.5
+  pack: constellation
+  version: 0.3.1
 ---
 
 # Review and decisions
