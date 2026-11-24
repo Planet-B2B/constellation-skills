@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.3.3
+
+- `working-with-constellation` § 1 step 4: the **Active org** line of the
+  workspace overview is checked against the chosen membership's **tenant**
+  id, the one `list_organisations` prints beside the organisation id, and
+  never against the organisation id. That line prints the tenant the server
+  resolved, and a tenant id need not equal its organisation id, so in an
+  organisation where the two differ, a correct selection failed the check and
+  the agent stopped or reported a false mismatch. Step 5's two-client check
+  names the same id. The warning that the **Org override** line is not
+  evidence is unchanged.
+- `start` § 2 says the same when it confirms the organisation.
+
+## 0.3.2
+
+- `session-summary`, `consult-the-kb`, `task-lifecycle` and
+  `review-and-decisions`: each description ends by saying that when the
+  repository has its own skill for the same step, the agent uses that skill,
+  and this one only when it is called by name, such as
+  `constellation:session-summary`. An agent picks a skill from its description
+  before it reads anything else, so this is where the rule has to be. Measured
+  with the new eval case: a session-summary request beside a repository's own
+  `session-summary-comment` loaded the repository skill in 5 of 15 runs on
+  0.3.1, where the pack's `session-summary` loaded in all 15, and in 10 of 10
+  runs on 0.3.2, where the pack's loaded in none.
+- `evals/`: new case `prefers-repo-session-summary`. It installs a
+  same-purpose repository skill beside the pack with a scaffold script and
+  requires that skill, not the pack's `session-summary`, to load in at least 4
+  of 5 runs. Run it with `claude plugin eval --scaffold`.
+- README: the section on repository skills says which pack skills defer to a
+  repository skill that covers the same step under another name.
+
 ## 0.3.1
 
 - `evals/`: the `start` case's judge rubric says the answer is a plan of

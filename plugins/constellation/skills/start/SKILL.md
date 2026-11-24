@@ -3,7 +3,7 @@ name: start
 description: 'Use only when a person explicitly asks to start, get started or set up Constellation in this session: "/constellation:start", "start", "get started with Constellation", "set up Constellation", "is Constellation ready?". Checks that the Constellation connector is available, settles the organisation, looks for the team-defaults page, and ends with a short readiness report and what to try first. Reads only; never creates, edits or installs anything. For work on a task, a knowledge-base question or a session summary, use the other skills of this pack instead.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Start with Constellation
@@ -42,7 +42,9 @@ steps 2 to 4, in order, instead of stopping here.
 Settle the organisation exactly as `working-with-constellation` § 1 says:
 `list_organisations`, then use the one the person named, else the only active
 membership, else **ask** which one. Confirm it by the **Active org** line of
-the workspace overview, `get_workspace_context({ organisationId: "<id>" })`.
+the workspace overview, `get_workspace_context({ organisationId: "<id>" })`:
+it must show the membership's **tenant** id, which `list_organisations` prints
+beside the organisation id, not the organisation id itself.
 
 If you have to ask, ask, and wait for the answer before step 3. If the
 confirmation fails, report it and stop before any other call.

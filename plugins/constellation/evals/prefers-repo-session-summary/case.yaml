@@ -1,0 +1,16 @@
+schema_version: '1.1'
+name: prefers-repo-session-summary
+description: >-
+  The pack is loaded beside a repository's own session-summary skill, under
+  another name, which scaffold.sh installs. A session-summary request loads the
+  repository's skill, not the pack's. The prompt and graders are in prompt.md
+  and graders/, like every other case; this file adds only the scaffold.
+# The case must fail when the repository skill loads in fewer than 4 of 5
+# runs. Its graders weigh 4 (2 for the load), so a run that misses the load
+# must lose more than 2: the closing line follows-the-repository-skill looks
+# for is written only in the repository skill's body, which an agent reads
+# only by loading it. A missed run then scores at most 1 of 4, two of them
+# leave at most 14 of 20 = 0.7, under the 0.8 threshold, and one leaves at
+# least 16 of 20 = 0.8.
+context:
+  scaffold_script: scaffold.sh

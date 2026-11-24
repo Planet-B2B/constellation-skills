@@ -1,9 +1,9 @@
 ---
 name: task-lifecycle
-description: 'The life of a Constellation task, from search-before-create to done. Use when the user asks to work on, start, pick up, claim, file, open, split, hand over or finish a task or ticket ("work on ENG-12", "file a task for this", "close ENG-12"), and whenever you are about to create, claim or change one. Covers tasks versus issues, the duplicate check, claims, reading the thread, links, follow-ups, splitting, estimates and time.'
+description: 'The life of a Constellation task, from search-before-create to done. Use when the user asks to work on, start, pick up, claim, file, open, split, hand over or finish a task or ticket ("work on ENG-12", "file a task for this", "close ENG-12"), and whenever you are about to create, claim or change one. Covers tasks versus issues, the duplicate check, claims, reading the thread, links, follow-ups, splitting, estimates and time. If the repository has its own skill for working, filing or claiming its tasks, use that skill instead; use this one only when it is called by name, constellation:task-lifecycle.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Task lifecycle

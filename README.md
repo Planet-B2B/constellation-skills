@@ -141,11 +141,16 @@ To call a skill by name in Claude Code, use the plugin's namespace:
 skill". If no skill loads, check first that the pack is loaded (above), then
 that the session was started or reloaded after the install.
 
-A skill of the repository's own with the same name wins over the pack's: in a
-repository that keeps its own `consult-the-kb`, "ask the knowledge base" and
-even "use the consult-the-kb skill" load the repository's. A repository skill
-that only covers the same request may be picked instead of the pack's. In
-either case, call the pack's by its namespaced name, as above.
+In a repository with skills of its own, a step that both cover uses the
+repository's skill. A repository skill with the same name as a pack skill wins
+over it: in a repository that keeps its own `consult-the-kb`, "ask the
+knowledge base" and even "use the consult-the-kb skill" load the repository's.
+For a repository skill under another name that covers the same step, such as a
+`session-summary-comment` beside the pack's `session-summary`, the pack's
+`session-summary`, `consult-the-kb`, `task-lifecycle` and
+`review-and-decisions` say in their descriptions to use the repository's
+skill. In either case, call the pack's by its namespaced name, as above, when
+you want it.
 
 ### Keep `AGENTS.md` working without the pack
 

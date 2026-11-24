@@ -1,9 +1,9 @@
 ---
 name: consult-the-kb
-description: 'Ask the Constellation knowledge base what the team has already decided, read the pages it cites, and cite them back. Use when the user asks to consult, check or search the knowledge base ("the KB"), or asks what the team has decided or learned about something, and on your own before non-trivial work such as a new feature or a design choice. Also how to record a lesson after a correction, and what an empty answer means.'
+description: 'Ask the Constellation knowledge base what the team has already decided, read the pages it cites, and cite them back. Use when the user asks to consult, check or search the knowledge base ("the KB"), or asks what the team has decided or learned about something, and on your own before non-trivial work such as a new feature or a design choice. Also how to record a lesson after a correction, and what an empty answer means. If the repository has its own skill for consulting the knowledge base, use that skill instead; use this one only when it is called by name, constellation:consult-the-kb.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Consult the knowledge base

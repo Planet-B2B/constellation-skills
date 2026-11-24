@@ -1,9 +1,9 @@
 ---
 name: session-summary
-description: 'Write the session summary: the one comment a session leaves on its Constellation task. Use when the user asks for the summary, recap or hand-over note of this session or of its task, or a wrap-up comment on the task, and on your own before handing work over, opening a pull request or ending a session. Decisions and why, what was rejected, deferrals each with a task key, open questions, and what shipped, shortest last.'
+description: 'Write the session summary: the one comment a session leaves on its Constellation task. Use when the user asks for the summary, recap or hand-over note of this session or of its task, or a wrap-up comment on the task, and on your own before handing work over, opening a pull request or ending a session. Decisions and why, what was rejected, deferrals each with a task key, open questions, and what shipped, shortest last. If the repository has its own skill for the session summary or the comment on the task, use that skill instead; use this one only when it is called by name, constellation:session-summary.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Session summary

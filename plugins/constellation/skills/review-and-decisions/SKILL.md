@@ -1,9 +1,9 @@
 ---
 name: review-and-decisions
-description: 'Who decides what on a Constellation team, and how an agent prepares work for a human to approve. Use when planning non-trivial work, answering review comments, asking for approval or a merge, or when a question needs a human decision ("which option should we take?"). Answer every review comment, never treat green checks as approval, and mark a task awaiting a decision instead of guessing.'
+description: 'Who decides what on a Constellation team, and how an agent prepares work for a human to approve. Use when planning non-trivial work, answering review comments, asking for approval or a merge, or when a question needs a human decision ("which option should we take?"). Answer every review comment, never treat green checks as approval, and mark a task awaiting a decision instead of guessing. If the repository has its own skill for review, approval or pull requests, use that skill instead; use this one only when it is called by name, constellation:review-and-decisions.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Review and decisions

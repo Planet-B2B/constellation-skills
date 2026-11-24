@@ -3,7 +3,7 @@ name: working-with-constellation
 description: 'Start here whenever a session touches work tracked in Constellation: a task or issue key such as ENG-12, a ticket, the backlog, a cycle, the team wiki or the knowledge base. Use it before the first Constellation call, even when the user names only a key or asks "what should I work on next?". Picks and confirms the organisation, orients, reads the team-defaults page, keeps to the Constellation MCP connector or the pt CLI, and says which other skill of this pack fits the request.'
 metadata:
   pack: constellation
-  version: 0.3.1
+  version: 0.3.3
 ---
 
 # Working with Constellation
@@ -30,14 +30,18 @@ and still succeed.
 4. **Confirm the organisation by the result, never by the kind of
    credential.** Pass the id to the workspace overview (`get_workspace_context`,
    or the CLI's workspace command) and check that its **Active org** line
-   shows the organisation id you chose. That line is what the server resolved.
+   shows the chosen membership's **tenant** id. That line is the tenant the
+   server resolved, and a tenant id need not equal its organisation id, so
+   compare it with the tenant id your organisation listing prints beside the
+   organisation id (`tenant <id>`), never with the organisation id you passed.
    Do not go by the **Org override** line: it only repeats the id your client
    sent. If the overview cannot be read, a project you know belongs to that
    organisation appearing in `list_projects` is the fallback check. If the
-   Active org is another organisation, or neither check passes, stop and ask
-   the user before you read or write anything else.
+   Active org shows any other id, or neither check passes, stop and ask the
+   user before you read or write anything else.
 5. If you use two clients, such as the connector and the CLI, check that both
-   report the same Active org before you write anything.
+   report the same Active org, the chosen membership's tenant id, before you
+   write anything.
 
 ## 2. Orient once
 
